@@ -592,6 +592,19 @@ AND auth_key_id NOT IN (
 				},
 				Rollback: func(db *gorm.DB) error { return nil },
 			},
+			{
+				// Add PQC (Post-Quantum Cryptography) field to nodes table.
+				// Adds PQCPublicKey for storing ML-KEM-768 public keys (1184 bytes).
+				ID: "202512240001-add-pqc-support",
+				Migrate: func(tx *gorm.DB) error {
+					err := tx.AutoMigrate(&types.Node{})
+					if err != nil {
+						return fmt.Errorf("automigrating types.Node for PQC: %w", err)
+					}
+					return nil
+				},
+				Rollback: func(db *gorm.DB) error { return nil },
+			},
 		},
 	)
 

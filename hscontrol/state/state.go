@@ -1854,6 +1854,11 @@ func (s *State) UpdateNodeFromMapRequest(id types.NodeID, req tailcfg.MapRequest
 			currentNode.Hostinfo = req.Hostinfo
 			currentNode.ApplyHostnameFromHostInfo(req.Hostinfo)
 
+			// Update PQC public key from hostinfo
+			if req.Hostinfo != nil && len(req.Hostinfo.PQCPublicKey) > 0 {
+				currentNode.PQCPublicKey = req.Hostinfo.PQCPublicKey
+			}
+
 			if routeChange {
 				// Apply pre-calculated route approval
 				// Always apply the route approval result to ensure consistency,
