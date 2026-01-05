@@ -137,6 +137,9 @@ type Node struct {
 	// See [Node.Hostinfo]
 	ApprovedRoutes []netip.Prefix `gorm:"column:approved_routes;serializer:json"`
 
+	// PQC (Post-Quantum Cryptography) public key for ML-KEM-768
+	PQCPublicKey []byte `gorm:"type:bytea"`
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time
@@ -1086,6 +1089,8 @@ func (nv NodeView) TailNode(
 
 		MachineAuthorized: !nv.IsExpired(),
 		Expired:           nv.IsExpired(),
+
+		PQCPublicKey: nv.PQCPublicKey().AsSlice(),
 	}
 
 	// Set LastSeen only for offline nodes to avoid confusing Tailscale clients

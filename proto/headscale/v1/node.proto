@@ -51,6 +51,10 @@ message Node {
   repeated string approved_routes = 23;
   repeated string available_routes = 24;
   repeated string subnet_routes = 25;
+
+  // PQC (Post-Quantum Cryptography) public key for ML-KEM-768 handshakes.
+  // This is the 1184-byte encapsulation key used for post-quantum key exchange.
+  bytes pqc_public_key = 26;
 }
 
 message RegisterNodeRequest {

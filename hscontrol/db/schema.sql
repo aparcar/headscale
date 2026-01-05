@@ -87,6 +87,8 @@ CREATE TABLE nodes(
   expiry datetime,
   approved_routes text,
 
+  pqc_public_key bytea,
+
   created_at datetime,
   updated_at datetime,
   deleted_at datetime,

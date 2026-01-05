@@ -72,6 +72,7 @@ func (src *Node) Clone() *Node {
 		dst.LastSeen = ptr.To(*src.LastSeen)
 	}
 	dst.ApprovedRoutes = append(src.ApprovedRoutes[:0:0], src.ApprovedRoutes...)
+	dst.PQCPublicKey = append(src.PQCPublicKey[:0:0], src.PQCPublicKey...)
 	if dst.DeletedAt != nil {
 		dst.DeletedAt = ptr.To(*src.DeletedAt)
 	}
@@ -102,6 +103,7 @@ var _NodeCloneNeedsRegeneration = Node(struct {
 	Expiry         *time.Time
 	LastSeen       *time.Time
 	ApprovedRoutes []netip.Prefix
+	PQCPublicKey   []byte
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	DeletedAt      *time.Time
