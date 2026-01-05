@@ -240,4 +240,4 @@ tool (
 	tailscale.com/cmd/viewer
 )
 
-replace tailscale.com => github.com/aparcar/tailscale v1.86.6-0.20260103130939-257aca8a7178
+replace tailscale.com => github.com/aparcar/tailscale v1.86.6-0.20260104012026-00fed5ca5900
