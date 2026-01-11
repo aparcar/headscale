@@ -1,0 +1,77 @@
+name: Mixed PQC End-to-End Tests
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  test-pqc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout headscale
+        uses: actions/checkout@v4
+        with:
+          path: headscale
+
+      - name: Checkout Tailscale PQC fork
+        uses: actions/checkout@v4
+        with:
+          repository: aparcar/tailscale
+          ref: pqc-integration
+          path: tailscale
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.0"
+
+      - name: Build Headscale
+        run: |
+          cd headscale
+          go build -o headscale ./cmd/headscale
+
+      - name: Build Tailscale with PQC support
+        run: |
+          cd tailscale
+          go build -o tailscale ./cmd/tailscale
+          go build -o tailscaled ./cmd/tailscaled
+
+      - name: Run PQC End-to-End Test
+        run: |
+          cd headscale
+          export HEADSCALE_BIN="$(pwd)/headscale"
+          export TAILSCALE_BIN="$(pwd)/../tailscale/tailscale"
+          export TAILSCALED_BIN="$(pwd)/../tailscale/tailscaled"
+          export TAILSCALE_SRC="$(pwd)/../tailscale"
+          chmod +x test-pqc-mixed-e2e.sh
+
+          # Run test with timeout (10 minutes)
+          timeout 600 ./test-pqc-mixed-e2e.sh || {
+            echo "Test failed or timed out"
+            # Show logs on failure
+            echo "=== Headscale logs ==="
+            cat /tmp/headscale-pqc-mixed-test/headscale/headscale.log || true
+            echo "=== Node1 logs ==="
+            cat /tmp/headscale-pqc-mixed-test/node1/tailscaled.log || true
+            exit 1
+          }
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqc-mixed-test-logs
+          path: |
+            /tmp/headscale-pqc-mixed-test/headscale/headscale.log
+            /tmp/headscale-pqc-mixed-test/node1/tailscaled.log
+            /tmp/headscale-pqc-mixed-test/node2/tailscaled.log
+            /tmp/headscale-pqc-mixed-test/node3/tailscaled.log
+            /tmp/headscale-pqc-mixed-test/node1/status.json
+            /tmp/headscale-pqc-mixed-test/node2/status.json
+            /tmp/headscale-pqc-mixed-test/node3/status.json
+            /tmp/headscale-pqc-mixed-test/headscale/db.sqlite
+          retention-days: 7
+          if-no-files-found: warn

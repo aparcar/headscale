@@ -158,6 +158,8 @@ func (v NodeView) LastSeen() views.ValuePointer[time.Time] {
 func (v NodeView) ApprovedRoutes() views.Slice[netip.Prefix] {
 	return views.SliceOf(v.ж.ApprovedRoutes)
 }
+func (v NodeView) PQCPublicKey() views.ByteSlice[[]byte] { return views.ByteSliceOf(v.ж.PQCPublicKey) }
+
 func (v NodeView) CreatedAt() time.Time { return v.ж.CreatedAt }
 func (v NodeView) UpdatedAt() time.Time { return v.ж.UpdatedAt }
 func (v NodeView) DeletedAt() views.ValuePointer[time.Time] {
@@ -189,6 +191,7 @@ var _NodeViewNeedsRegeneration = Node(struct {
 	Expiry         *time.Time
 	LastSeen       *time.Time
 	ApprovedRoutes []netip.Prefix
+	PQCPublicKey   []byte
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	DeletedAt      *time.Time

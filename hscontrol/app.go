@@ -751,7 +751,6 @@ func (h *Headscale) Serve() error {
 		log.Info().Msg("metrics server disabled (metrics_listen_addr is empty)")
 	}
 
-
 	var tailsqlContext context.Context
 	if tailsqlEnabled {
 		if h.cfg.Database.Type != types.DatabaseSqlite {
